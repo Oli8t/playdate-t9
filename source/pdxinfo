@@ -1,0 +1,6 @@
+name=9 Key Test
+author=colby
+description=Prototype for playdate text input in a T9-like way
+bundleID=com.colby.9Key
+version=0.0.1
+buildNumber=1

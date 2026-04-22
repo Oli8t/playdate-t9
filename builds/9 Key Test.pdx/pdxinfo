@@ -4,5 +4,5 @@ description=Prototype for playdate text input in a T9-like way
 bundleID=com.colby.9Key
 version=0.0.1
 buildNumber=1
-pdxversion=30003
-buildtime=830118058
+pdxversion=30005
+buildtime=830157694

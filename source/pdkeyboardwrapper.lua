@@ -5,7 +5,10 @@ local pdKeyboard = playdate.keyboard
 local kbmt = {
     __index = function(t, key)
         if key == "text" then
-            return pdKeyboardWrapper.activeKeyboard.text
+            return pdKeyboardWrapper.activeKeyboard[key]
+        end
+        if key == "kCapitalizationNormal" or key == "kCapitalizationWords" or key == "kCapitalizationSentences" then
+            return pdKeyboard[key]
         end
     end,
     __newindex = function(t, key, value)
@@ -83,6 +86,10 @@ end
 
 function pdKeyboardWrapper.hide()
     pdKeyboardWrapper.activeKeyboard.hide()
+end
+
+function pdKeyboardWrapper.setCapitalizationBehavior(behavior)
+    pdKeyboardWrapper.activeKeyboard.setCapitalizationBehavior(behavior)
 end
 
 function pdKeyboardWrapper.left()

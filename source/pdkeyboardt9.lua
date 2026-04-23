@@ -193,7 +193,7 @@ function pdKeyboardT9.Initialize()
         pdKeyboardT9.keyW = math.max(pdKeyboardT9.keyW, pdKeyboardT9.keyFont:getTextWidth(table.concat(chars)))
     end
     pdKeyboardT9.keyW += (2 * pdKeyboardT9.padding)
-    pdKeyboardT9.keyH = 2 * pdKeyboardT9.keyFont:getHeight() + (2 * pdKeyboardT9.padding)
+    pdKeyboardT9.keyH = pdKeyboardT9.keyFont:getHeight() + (2 * pdKeyboardT9.padding) + gfx.getSystemFont():getHeight()
 end
 
 function pdKeyboardT9.show(text)
@@ -259,10 +259,10 @@ function pdKeyboardT9.render()
 
     local w = pdKeyboardT9.keyW
     local h = pdKeyboardT9.keyH
-    local totalW = w * 5
+    local totalW = w * 3
     local lx = (pdKeyboardT9.activeAnim and pdKeyboardT9.activeAnim:currentValue()) or 400
     local px = lx + (400 - lx) / 2 - totalW / 2
-    local py = 120 - h * 3 / 2
+    local py = h*2
     local dir = (playdate.buttonIsPressed(playdate.kButtonA) and 3) or
     (playdate.buttonIsPressed(playdate.kButtonB) and 1) or 2
     gfx.setColor(gfx.kColorWhite)
@@ -277,36 +277,49 @@ function pdKeyboardT9.render()
                 sel = x == dir
             end
             gfx.setColor(sel and gfx.kColorWhite or gfx.kColorBlack)
-            gfx.fillRect(px + w * x, py + h * (y - 1), w, h)
+            gfx.fillRect(px + w * (x-1), py + h * (y - 1), w, h)
             local chars = pdKeyboardT9.keyMappings[pdKeyboardT9.mode][x + 3 * (y - 1)]
             local str = ""
             for c = 1, #chars do
                 str = str .. chars[c]
             end
             gfx.setImageDrawMode(gfx.kDrawModeNXOR)
-            gfx.drawText(str, px + 2 + w * x, py + 2 + h * (y - 1))
+            gfx.drawText(str, pdKeyboardT9.padding + px + w * (x -1), pdKeyboardT9.padding + py + h * (y - 1))
+            if sel then
+                gfx.getSystemFont():drawText((y==1 and "⬆️") or (y==3 and "⬇️") or (dir==3 and "⬅️") or (dir==1 and "➡️") or (x==1 and "⬅️") or "➡️", pdKeyboardT9.padding + px + w * (x -1), pdKeyboardT9.padding + py + h * (y) -gfx.getSystemFont():getHeight())
+            end
         end
     end
+    py -= 3
     gfx.setColor(dir == 1 and gfx.kColorWhite or gfx.kColorBlack)
-    gfx.fillRect(px, py + h, w, h)
-    gfx.drawText("Aa1", px, py + h)
+    gfx.fillRect(px, py-h, w, h)
+    gfx.getSystemFont():drawText("Ⓑ", px, py-h-gfx.getSystemFont():getHeight())
+    gfx.drawText("Aa1", pdKeyboardT9.padding + px, pdKeyboardT9.padding + py-h )
+    if dir == 1 then
+        gfx.getSystemFont():drawText("⬅️", pdKeyboardT9.padding + px, pdKeyboardT9.padding + py - gfx.getSystemFont():getHeight())
+    end
+
     gfx.setColor(dir == 3 and gfx.kColorWhite or gfx.kColorBlack)
-    gfx.fillRect(2 + px + w * 4, 2 + py + h, w, h)
+    gfx.fillRect(px + w * 2, py - h, w, h)
     local space_case = pdKeyboardT9.keyMappings[pdKeyboardT9.mode][11]
     local str = ""
     for c = 1, #space_case do
-        str = str .. (space_case[c] == " " and "(spc)" or space_case[c])
+        str = str .. (space_case[c] == " " and "(sp)" or space_case[c])
     end
-    gfx.drawText(str, 2 + px + w * 4, 2 + py + h)
+    gfx.getSystemFont():drawText("Ⓐ", px + w*3 - gfx.getSystemFont():getTextWidth("Ⓐ"), py-h-gfx.getSystemFont():getHeight())
+    gfx.drawText(str, pdKeyboardT9.padding + px + w * 3 - gfx.getFont():getTextWidth(str), pdKeyboardT9.padding + py - h)
+    if dir == 3 then
+        gfx.getSystemFont():drawText("➡️", pdKeyboardT9.padding + px + w*2, pdKeyboardT9.padding + py - gfx.getSystemFont():getHeight())
+    end
 
-    gfx.drawTextInRect(
-    "Crank to backspace\nA and B shift the dpad key targets\nHold A and B to close\n (A 1st: OK, B 1st: cancel)", lx + 3,
-        240 - py + 10, 400 - 222, 240)
+    local width = gfx.getSystemFont():getTextWidth("🎣") + gfx.getFont():getTextWidth(": DEL")
+    gfx.getSystemFont():drawText("🎣", lx + (400-lx)/2 - width/2, 240-gfx.getSystemFont():getHeight())
+    gfx.drawText(": DEL", lx + (400-lx)/2 - width/2 + gfx.getSystemFont():getTextWidth("🎣"), 240-gfx.getSystemFont():getHeight())
 
     if pdKeyboardT9.currentInput.char then
         if pdKeyboardT9.previewFont then
             gfx.setFont(pdKeyboardT9.previewFont)
         end
-        gfx.drawText(pdKeyboardT9.currentInput.char, lx + (400 - lx) / 2, 40, nil, nil, gfx.kAlignCenter)
+        gfx.drawTextAligned(pdKeyboardT9.currentInput.char, px + 3*w/2 - gfx.getFont():getTextWidth(pdKeyboardT9.currentInput.char)/2, 40, gfx.kAlignCenter)
     end
 end

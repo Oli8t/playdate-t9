@@ -4,14 +4,15 @@ import "CoreLibs/animation"
 
 import "pdkeyboardwrapper"
 import "pdkeyboardt9"
+import "pdkeyboard9simple"
 
 -- Localizing commonly used globals
 local pd <const> = playdate
 local gfx <const> = playdate.graphics
 
-MonoCarlo = gfx.font.new("fonts/MonoCarlo")
+TestFont = gfx.font.new("/System/Fonts/Roobert-11-Medium")
 
-local kbs = {{name = "Default", kb = nil}, {name = "9KeyIsh", kb = pdKeyboardT9}}
+local kbs = {{name = "Default", kb = nil}, {name = "9KeySimple", kb = pdKeyboard9Simple}, {name = "9KeyIsh (Bad)", kb = pdKeyboardT9},}
 local kbi = 1
 
 local prekbInputHandlers = {
@@ -41,10 +42,9 @@ function playdate.update()
     gfx.clear(gfx.kColorBlack)
     
     gfx.setImageDrawMode(gfx.kDrawModeInverted)
-    MonoCarlo:drawText("Keyboard: ".. kbs[kbi].name, 10, 20)
-    MonoCarlo:drawText("Text: " .. (playdate.keyboard.text or ""), 10, 40)
+    TestFont:drawText("Keyboard: ".. kbs[kbi].name, 10, 20)
+    TestFont:drawText("Text: " .. (playdate.keyboard.text or ""), 10, 80)
 
 end
 
 pdKeyboardWrapper.Initialize()
-pdKeyboardT9.keyFont = MonoCarlo
